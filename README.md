@@ -2,7 +2,7 @@
 
 A generic, team-ready template for applying context engineering principles to any codebase. Drop it into your repo and start shipping better work with AI coding agents.
 
-Based on the QRSPI workflow (Question, Research, Structure, Plan, Implement) — the evolution of Research-Plan-Implement that emerged from HumanLayer's production practices, Dex Horthy's talks, and real-world experience on mature codebases.
+Based on the full 8-step process from Dex Horthy's talks — Questions, Research, Design, Structure Outline, Plan, Worktree, Implement, Pull Request — evolved from HumanLayer's production practices and real-world experience on mature codebases.
 
 ## Why This Exists
 
@@ -17,12 +17,15 @@ bce/
 ├── template/                    # Drop into your repo
 │   ├── CLAUDE.md                # Customize for your project
 │   ├── .claude/
-│   │   ├── commands/            # QRSPI workflow phases
-│   │   │   ├── question.md      # Q — Surface design decisions
-│   │   │   ├── research.md      # R — Map the codebase
-│   │   │   ├── structure.md     # S — Phase the work
-│   │   │   ├── plan.md          # P — Detail exact steps
-│   │   │   ├── implement.md     # I — Execute the plan
+│   │   ├── commands/            # The full 8-step process
+│   │   │   ├── question.md      # 1. Questions — iterative design decisions
+│   │   │   ├── research.md      # 2. Research — map the codebase
+│   │   │   ├── design.md        # 3. Design — WHERE we're going
+│   │   │   ├── structure.md     # 4. Structure Outline — HOW we get there
+│   │   │   ├── plan.md          # 5. Plan — exact steps with file:line refs
+│   │   │   ├── worktree.md      # 6. Worktree — isolate for implementation
+│   │   │   ├── implement.md     # 7. Implement — execute phase by phase
+│   │   │   ├── pr.md            # 8. Pull Request — ship with context
 │   │   │   └── iterate-plan.md  # Revise existing plans
 │   │   └── agents/              # Sub-agent definitions
 │   │       ├── codebase-locator.md
@@ -73,17 +76,21 @@ your-repo/
 │       └── .context.md          # API patterns
 ```
 
-### 4. Use the QRSPI workflow
+### 4. Use the workflow
 
-Match effort to complexity:
+The full process (match effort to complexity — skip steps for simpler tasks):
 
-| Task Complexity | Approach |
+```
+/question → /research → /design → /structure → /plan → /worktree → /implement → /pr
+```
+
+| Task Complexity | Steps Used |
 |---|---|
 | Trivial (typo, button color) | Direct chat |
-| Simple (single-file feature) | `/plan` → implement |
-| Medium (multi-file, single concern) | `/research` → `/plan` → `/implement` |
-| Complex (architectural, multi-service) | `/question` → `/research` → `/structure` → `/plan` → `/implement` |
-| Extremely complex | Whiteboard first, then full QRSPI |
+| Simple (single-file feature) | `/plan` → `/implement` |
+| Medium (multi-file, single concern) | `/research` → `/plan` → `/implement` → `/pr` |
+| Complex (architectural, multi-service) | All 8 steps |
+| Extremely complex | Whiteboard first, then all 8 |
 
 ## The Leverage Hierarchy
 

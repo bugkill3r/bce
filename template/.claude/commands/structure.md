@@ -1,39 +1,34 @@
 ---
-description: Create a phased breakdown of the work — distinguish design from implementation
+description: Create a phased breakdown — HOW we get to the design's end state
 ---
 
-# Structure — Phase the Work
+# Structure Outline — Phase the Work
 
-You are tasked with taking research findings and design decisions and producing a phased breakdown of the work. This step bridges the gap between "what we know" (research) and "what we'll do" (plan).
-
-## Why This Step Exists
-
-Plans that jump straight from research to implementation details often fail because they conflate WHERE we're going (design) with HOW we get there (steps). Structure separates these concerns.
+You are tasked with taking the Design document and producing a phased breakdown. Design defined WHERE we're going. Structure defines HOW we get there — the ordering, the phases, the validation approach. ~2 pages.
 
 ## When This Command Is Invoked
 
-If a research document or decisions are provided, read them fully and begin immediately.
+If a design document is provided, read it fully and begin.
 
 Otherwise respond with:
 ```
 I'll help structure this work into phases. Please provide:
-1. The research document from /research (or paste key findings)
-2. Design decisions from /question (if applicable)
-3. Any constraints on ordering or dependencies
+1. The design document from /design
+2. Any constraints on ordering or dependencies
 
-I'll create a phased breakdown for your review before we detail the plan.
+I'll create a phased breakdown for your review.
 ```
 
 Then wait for the user's input.
 
 ## Process
 
-### Step 1: Absorb Context
+### Step 1: Absorb the Design
 
-- Read the research document fully
-- Review any design decisions made during /question
+- Read the design document fully
 - Understand the current state and desired end state
-- Identify the delta — what needs to change
+- Note resolved decisions and constraints
+- Identify the delta — what needs to change to get from current to desired
 
 ### Step 2: Identify Natural Phases
 
@@ -41,32 +36,23 @@ Break the work into phases that are:
 
 - **Independently testable** — each phase produces a verifiable result
 - **Incrementally valuable** — earlier phases don't depend on later ones
-- **Appropriately scoped** — a phase should be completable in one focused session
+- **Appropriately scoped** — completable in one focused session
 - **Logically ordered** — dependencies flow forward, not backward
+- **Independently revertable** — if Phase 3 fails, Phases 1-2 still stand
 
-Common phase patterns:
+Common patterns:
 - **Database changes** → Schema/migration → Store methods → Business logic → API → Client
 - **New features** → Data model → Backend logic → API endpoints → UI
 - **Refactoring** → Document current behavior → Incremental changes → Migration → Cleanup
 
-### Step 3: Define the Structure
+### Step 3: Write the Structure Outline
 
-Present the structure for review:
+~2 pages covering:
 
 ```markdown
-# Structure: [Feature/Task Name]
+# Structure Outline: [Feature/Task Name]
 
-## Current State
-[1-2 sentences on what exists now, from research]
-
-## Desired End State
-[1-2 sentences on what should exist after implementation]
-[How to verify we got there]
-
-## What We're NOT Doing
-- [Explicitly list out-of-scope items]
-- [Things that might seem related but aren't part of this work]
-- [Future enhancements to defer]
+**Design ref**: [path or link to design document]
 
 ## Phases
 
@@ -85,13 +71,17 @@ Present the structure for review:
 ### Phase 3: [Name] — [What It Accomplishes]
 ...
 
+## Validation Approach
+- [How we validate each phase before moving on]
+- [Automated checks]
+- [Manual checks]
+
 ## Risk Areas
 - [Where things might get complicated]
 - [Dependencies that could surprise us]
-- [Assumptions that could be wrong]
 
-## Open Questions
-- [Anything that needs resolution before planning]
+## Phase Dependencies
+[Any non-obvious ordering constraints]
 ```
 
 ### Step 4: Get Feedback
@@ -100,25 +90,17 @@ Present the structure and ask:
 - Are the phases properly scoped?
 - Is the ordering right?
 - Should anything be split or merged?
-- Are the "not doing" items correct?
 
-Do NOT proceed to detailed planning until the user approves the structure.
-
-### Step 5: Resolve Open Questions
-
-If open questions exist:
-- Research them with sub-agents if they're code questions
-- Ask the user if they're design questions
-- Do NOT carry open questions into the plan
+Do NOT proceed to planning until the user approves.
 
 ## Important Guidelines
 
-- **Keep it high-level.** This is architecture, not implementation details.
-- **3-5 phases max.** If you need more, the task should be split into separate efforts.
-- **Each phase is a checkpoint.** The human reviews after each phase.
-- **The "not doing" section matters most.** It prevents scope creep during implementation.
-- **Phases should be independently revertable.** If Phase 3 fails, Phases 1-2 should still be valuable.
+- **This is HOW, not WHAT.** The design already defined the end state. Don't re-debate it here.
+- **3-5 phases max.** If you need more, the task should be split.
+- **~2 pages max.** Keep it scannable.
+- **Each phase is a checkpoint.** Human reviews after each.
+- **No implementation details.** File-level changes and code snippets go in `/plan`.
 
 ## Output
 
-The structure document feeds directly into `/plan`, which will add implementation details (specific file changes, code snippets, success criteria) to each phase.
+The structure outline feeds into `/plan`, which adds implementation details (specific file changes, code snippets, success criteria) to each phase.

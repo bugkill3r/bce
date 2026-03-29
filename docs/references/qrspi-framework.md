@@ -1,6 +1,6 @@
-# The QRSPI Framework
+# The Full Process: From RPI to 8 Steps
 
-## Evolution: From RPI to QRSPI
+## Evolution: From RPI to the Full Process
 
 The original Research-Plan-Implement (RPI) workflow — introduced by Dex Horthy at HumanLayer — proved effective but had failure modes in practice:
 
@@ -11,15 +11,15 @@ The original Research-Plan-Implement (RPI) workflow — introduced by Dex Horthy
 - About half of users received finished plans with predetermined decisions instead of collaborative ones
 - Teams pasted entire tickets into research rather than asking targeted questions, producing opinions instead of facts
 
-**The instruction budget:** Frontier LLMs can reliably follow only ~150-200 instructions. When you combine system prompts, planning prompts, tool definitions, and MCP servers, models become "over budget" and silently drop requirements. This is why QRSPI splits one 85-instruction prompt into five prompts of <40 instructions each.
+**The instruction budget:** Frontier LLMs can reliably follow only ~150-200 instructions. When you combine system prompts, planning prompts, tool definitions, and MCP servers, models become "over budget" and silently drop requirements. This is why the process splits one 85-instruction prompt into eight prompts of <40 instructions each.
 
 **Code review reversal:** Dex initially advocated reviewing plans instead of code. After 6 months, he revised: reading a 1,000-line plan still produces ~1,000 lines of code — review both. "Please read the code. It's the same amount of work."
 
-The team's initial expansion was **QRDSPWIP** (Question, Research, Design, Structure, Plan, Worktree, Implement, Publish) — which was too long to remember. They simplified to **QRSPI**: Question, Research, Structure, Plan, Implement.
+The team's initial expansion was **QRDSPWIP** (Question, Research, Design, Structure, Plan, Worktree, Implement, Publish) — the acronym didn't work, so they called it **QRSPI** for short. But the actual process has all 8 steps.
 
-## The Five Phases
+## The Eight Steps
 
-### Q — Question
+### 1. Questions
 
 **Purpose:** Surface implicit design decisions BEFORE investing time in research.
 
@@ -36,7 +36,7 @@ Most failed implementations trace back to misunderstood requirements, not bad co
 
 **Key insight:** Without this step, research often explores the wrong things. Questioning ensures research time is well-spent.
 
-### R — Research
+### 2. Research
 
 **Purpose:** Understand how the codebase actually works. Document what exists — nothing more.
 
@@ -57,28 +57,40 @@ Most failed implementations trace back to misunderstood requirements, not bad co
 - Output: One markdown document
 - Parent context cost: Near-zero (sub-agents did the heavy reading)
 
-### S — Structure
+### 3. Design
 
-**Purpose:** Create a phased breakdown distinguishing "where we're going" (design) from "how we get there" (plan details).
-
-This phase was added because plans that jump straight from research to implementation details often fail. Structure separates design from execution.
+**Purpose:** Define WHERE we're going — the desired end state, separate from how we get there.
 
 **What happens:**
-- Define current state and desired end state
-- Break work into independently testable phases
+- Summarize current state from research (with file:line references)
+- Define the desired end state concretely
+- Document resolved decisions from the Questioning phase
+- Resolve any remaining open questions
 - Establish what we're NOT doing (scope control)
-- Identify risk areas and dependencies
-- Resolve any open questions
 
-**Output:** A structured outline with 3-5 phases, each with a clear goal, files touched, dependencies, and verification approach.
+**Output:** A Design Discussion document (~200 lines) containing: current state, desired end state, codebase patterns to follow, resolved decisions with rationale, and out-of-scope items.
+
+**Key principle:** This is WHAT, not HOW. No implementation steps, no phase ordering, no file-change lists.
+
+### 4. Structure Outline
+
+**Purpose:** Define HOW we get to the design's end state — the phased breakdown.
+
+**What happens:**
+- Take the Design document as input
+- Break the delta (current → desired) into independently testable phases
+- Define validation approach for each phase
+- Identify ordering constraints and dependencies
+
+**Output:** A ~2-page structure outline with 3-5 phases, each with a goal, files touched, dependencies, and verification approach.
 
 **Key principles:**
-- Each phase is independently testable
-- Each phase is independently revertable
+- Each phase is independently testable and revertable
 - Earlier phases don't depend on later ones
 - A phase should be completable in one focused session
+- This is HOW, not WHAT — the Design already defined the end state
 
-### P — Plan
+### 5. Plan
 
 **Purpose:** Detail exact implementation steps with file references, code snippets, and success criteria.
 
@@ -99,7 +111,20 @@ A good plan is explicit enough for mechanical execution. Someone reading it shou
 - "What we're NOT doing" section prevents scope creep
 - Plans are reviewed by humans before implementation begins
 
-### I — Implement
+### 6. Worktree
+
+**Purpose:** Create an isolated environment for implementation — the context isolation boundary.
+
+**What happens:**
+- Create a git worktree on a feature branch
+- Install dependencies, verify build and tests pass clean
+- Load the plan into the fresh context
+
+**Output:** A clean worktree with passing build, ready for implementation.
+
+**Key principle:** This is a context reset point. The implementation phase starts with a fresh context window — just the plan and the clean worktree. No accumulated exploration noise.
+
+### 7. Implement
 
 **Purpose:** Execute the plan mechanically, phase by phase, with verification.
 
@@ -108,36 +133,53 @@ A good plan is explicit enough for mechanical execution. Someone reading it shou
 - Run automated verification after each phase
 - Pause for human review at phase boundaries
 - Handle mismatches explicitly (stop, communicate, get direction)
-- Keep context window small (research summary + plan + active code)
+- Keep context window small (plan + active code)
 
 **Output:** Working code, verified against the plan's success criteria.
 
 **Key principles:**
-- Implementation should be almost mechanical — the thinking happened in prior phases
+- Implementation should be almost mechanical — the thinking happened in prior steps
 - Context stays small — the smart zone is preserved for actual coding
 - Don't expand scope — flag things that should change but aren't in the plan
 - Pause between phases — this is where you catch issues tests miss
 
-## When to Use Which Phases
+### 8. Pull Request
 
-| Task Complexity | Phases Used |
+**Purpose:** Ship with process context attached — not just a wall of green diffs.
+
+**What happens:**
+- Run final verification (automated success criteria)
+- Push the branch
+- Create PR with design decisions, phase-by-phase changes, verification results, and review focus areas
+- Include out-of-scope items to set reviewer expectations
+
+**Output:** A PR that takes the reviewer on a journey — WHY, not just WHAT.
+
+**Key principle:** As AI output scales, reviewing thousands of lines is unsustainable. PRs that include the decisions, design, and verification from prior steps make review tractable.
+
+## When to Use Which Steps
+
+| Task Complexity | Steps Used |
 |---|---|
 | **Trivial** (typo, color change) | Direct chat — skip everything |
-| **Simple** (single-file feature) | P → I |
-| **Medium** (multi-file, single concern) | R → P → I |
-| **Complex** (architectural, multi-service) | Q → R → S → P → I |
-| **Extremely complex** (novel architecture) | Whiteboard → Q → R → S → P → I |
+| **Simple** (single-file feature) | Plan → Implement |
+| **Medium** (multi-file, single concern) | Research → Plan → Implement → PR |
+| **Complex** (architectural, multi-service) | All 8 steps |
+| **Extremely complex** (novel architecture) | Whiteboard → All 8 steps |
 
-## Compaction Between Phases
+## Compaction Between Steps
 
-The critical operational detail: **start a fresh context window between major phases.**
+The critical operational detail: **start a fresh context window between major steps.**
 
 ```
-/question → [decisions documented] → FRESH WINDOW
-/research → [research document] → FRESH WINDOW
-/structure → [phase breakdown] → FRESH WINDOW
-/plan → [detailed plan] → FRESH WINDOW
-/implement → [working code]
+/question  → [decisions doc]       → FRESH WINDOW
+/research  → [research doc]        → FRESH WINDOW
+/design    → [design doc]          → FRESH WINDOW
+/structure → [structure outline]   → FRESH WINDOW
+/plan      → [detailed plan]       → FRESH WINDOW
+/worktree  → [clean environment]   → FRESH WINDOW
+/implement → [working code]        →
+/pr        → [PR with context]
 ```
 
 Each phase produces a compressed artifact. The next phase starts with ONLY that artifact, not the entire history of exploration. This keeps every phase in the smart zone.
@@ -161,17 +203,20 @@ For larger features, parallelize the research phase:
 
 Sequential 10-minute exploration becomes 2 minutes.
 
-## The Human Role at Each Phase
+## The Human Role at Each Step
 
-| Phase | Human Role | Time |
+| Step | Human Role | Time |
 |---|---|---|
-| Q — Question | Make design decisions | ~5-15 min |
-| R — Research | Verify findings are correct | ~5-10 min |
-| S — Structure | Approve phase breakdown | ~5 min |
-| P — Plan | Review for correctness and completeness | ~10-15 min |
-| I — Implement | Review at phase boundaries, manual verification | ~5 min/phase |
+| 1. Questions | Make design decisions (back-and-forth) | ~5-15 min |
+| 2. Research | Verify findings are correct | ~5-10 min |
+| 3. Design | Review end state and decisions doc | ~5-10 min |
+| 4. Structure | Approve phase breakdown | ~5 min |
+| 5. Plan | Review for correctness and completeness | ~10-15 min |
+| 6. Worktree | Confirm branch/setup | ~1 min |
+| 7. Implement | Review at phase boundaries, manual verification | ~5 min/phase |
+| 8. PR | Review PR description, submit for team review | ~5 min |
 
-Total human time: 30-60 minutes for a complex feature. But those minutes are high-leverage — catching errors early where they're cheap to fix.
+Total human time: 40-75 minutes for a complex feature. But those minutes are high-leverage — catching errors early where they're cheap to fix.
 
 ## After-Action Reports
 
@@ -194,20 +239,19 @@ For autonomous workflows, HumanLayer uses "Ralph Loops" (named after Geoff Huntl
 
 This keeps each loop in the smart zone by design. The agent never accumulates stale context across phases.
 
-## The Full 7-Step Origin
+## The Naming
 
-The internal pipeline before simplification was:
+The internal pipeline was originally called **QRDSPWIP** — too long. They shortened the acronym to **QRSPI** but kept all the steps. The actual process from the slide is 8 steps:
 
-1. **Questioning** — Surface design decisions as explicit options
-2. **Research** — Targeted, factual codebase investigation
-3. **Design** — "Where we're going" — desired end state
-4. **Structure** — "How we get there" — phased breakdown (~2 pages)
-5. **Plan** — Precise implementation steps with verification
-6. **Worktree** — Context isolation for implementation
-7. **Implement** — Phase-by-phase execution
+1. Questions
+2. Research
+3. Design
+4. Structure Outline
+5. Plan
+6. Worktree
+7. Implement
+8. Pull Request
 
-Two key human-review artifacts:
+Two key human-review artifacts produced along the way:
 - **Design Discussion** (~200 lines): current state, desired end state, codebase patterns, resolved decisions, open questions
 - **Structure Outline** (~2 pages): phase ordering and validation approaches
-
-For the generic template, Design is folded into Structure (since most teams don't need a separate design document), and Worktree is an implementation detail rather than a workflow phase — yielding the 5-step QRSPI.
