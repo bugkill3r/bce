@@ -1,0 +1,44 @@
+# .context.md — Template
+
+<!--
+  Place this file in any directory to provide domain-specific context
+  to AI coding agents working in that directory.
+
+  Guidelines:
+  - Keep it under 200 tokens
+  - Only include information NOT derivable from reading the code
+  - Focus on tribal knowledge, non-obvious constraints, and gotchas
+  - Update when conventions change (treat it like code, not docs)
+  - Delete sections that don't apply
+-->
+
+## Purpose
+
+<!-- What does this directory/module do? One sentence. -->
+[e.g., Handles authentication and authorization for all API endpoints]
+
+## Key Conventions
+
+<!-- Rules specific to this area of the codebase -->
+- [e.g., All handlers must validate JWT before processing]
+- [e.g., Rate limiting is handled by middleware, not individual handlers]
+- [e.g., Use domain errors from pkg/errors, not raw HTTP status codes]
+
+## Non-Obvious Constraints
+
+<!-- Things that would surprise someone working here for the first time -->
+- [e.g., The legacy auth adapter in adapters/legacy.go talks to a SOAP service — don't try to "modernize" it]
+- [e.g., Session tokens have a 15-minute TTL enforced by the upstream proxy, not by this code]
+
+## Integration Points
+
+<!-- How this code connects to other parts of the system -->
+- [e.g., Called by API middleware in src/api/middleware.go]
+- [e.g., Publishes events to the auth channel via src/events/publisher.go]
+- [e.g., Uses the user store in src/infra/stores/user_store.go]
+
+## Danger Zones
+
+<!-- Things that can go very wrong -->
+- [e.g., Don't modify the token validation logic without running the full integration suite — it's caught production bugs twice]
+- [e.g., The billing webhook handler has race conditions under load — see issue #423]

@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'git commit'; then echo 'Reminder: run tests before committing.'; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "# Example: Auto-inject directory-level context when reading files in specific paths.\n# Customize the path and context file for your project.\n#\n# if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'src/auth'; then\n#   cat src/auth/.context.md 2>/dev/null;\n# fi\n#\n# if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'src/billing'; then\n#   cat src/billing/.context.md 2>/dev/null;\n# fi\n\n# Remove the comments above and customize for your project.\n# Start with ONE hook solving a real problem. Don't over-engineer.\ntrue"
+          }
+        ]
+      }
+    ]
+  }
+}

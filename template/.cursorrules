@@ -1,0 +1,43 @@
+# Project Conventions (Cursor)
+
+<!--
+  This file mirrors CLAUDE.md for Cursor users.
+  Keep in sync with CLAUDE.md — same content, same updates.
+  Cursor loads this automatically when working in the project.
+-->
+
+## Tech Stack
+
+<!-- List your core technologies -->
+- Language: [e.g., TypeScript, Go, Python]
+- Framework: [e.g., Next.js, Django, Gin]
+- Database: [e.g., PostgreSQL, MongoDB]
+- Testing: [e.g., Jest, pytest, go test]
+
+## Build Commands
+
+<!-- Quick reference for common operations -->
+- Install: [command]
+- Test: [command]
+- Lint: [command]
+- Build: [command]
+
+## Non-Negotiables
+
+- [e.g., Never mock the database in integration tests]
+- [e.g., All API endpoints must have request validation]
+- [e.g., Use absolute imports]
+
+## Architecture
+
+- [e.g., Handler → Service → Store pattern for all endpoints]
+- [e.g., Domain errors in pkg/errors, not raw HTTP codes]
+
+## What NOT to Do
+
+- [e.g., Don't add dependencies without team discussion]
+- [e.g., Don't use console.log — use the structured logger]
+
+## Directory-Level Context
+
+When working in specific directories, check for `.context.md` files that provide domain-specific conventions and constraints.
