@@ -1,6 +1,6 @@
 # Sources & References
 
-All source material that informed the BCE template.
+All source material that informed the ACE template.
 
 ## Primary Sources
 

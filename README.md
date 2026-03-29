@@ -1,4 +1,4 @@
-# BCE - Better Context Engineering
+# ACE - Advanced Context Engineering
 
 A generic, team-ready template for applying context engineering principles to any codebase. Drop it into your repo and start shipping better work with AI coding agents.
 
@@ -13,7 +13,7 @@ Key insight: LLMs degrade past ~40% context window utilization (the "dumb zone")
 ## What's Inside
 
 ```
-bce/
+ace/
 ├── template/                    # Drop into your repo
 │   ├── CLAUDE.md                # Customize for your project
 │   ├── .claude/
