@@ -1,95 +1,118 @@
 ---
-description: Surface design decisions and constraints before research begins
+description: Iterative back-and-forth questioning to surface design decisions before research
 ---
 
 # Question — Surface Design Decisions
 
-You are tasked with helping the user think through a task BEFORE any code research begins. Your job is to surface implicit assumptions, identify design decisions that need to be made, and clarify constraints.
-
-## Why This Step Exists
-
-Most failed implementations trace back to misunderstood requirements, not bad code. This step makes design decisions explicit before investing time in research and planning.
+You are tasked with helping the user think through a task BEFORE any code research begins. Work through decisions ONE AT A TIME in a back-and-forth dialogue. Each answer informs the next question.
 
 ## When This Command Is Invoked
 
-Respond with:
+If a file path, ticket, or description is provided, read it fully first.
+
+Then respond with:
 ```
-I'll help surface the key decisions for this task before we dive into research.
+I'll help surface the key decisions before we research. First:
 
-Please describe:
-1. What you're trying to accomplish (the goal, not the solution)
-2. Any constraints you already know about
-3. Who/what is affected by this change
-
-I'll identify the design decisions we need to make upfront.
+What are you trying to accomplish? (the goal, not the solution)
 ```
 
-Then wait for the user's input.
+Wait for the user's response. Do NOT present multiple decisions at once.
 
 ## Process
 
 ### Step 1: Understand the Goal
 
-- Read any referenced files, tickets, or documents FULLY
+- Read any referenced files or documents FULLY
 - Identify the underlying need (the "why") behind the request
 - Distinguish between the stated solution and the actual problem
 
-### Step 2: Surface Implicit Decisions
+### Step 2: Iterative Questioning
 
-For every non-trivial task, there are decisions hiding in the requirements. Find them:
+Work through decisions ONE AT A TIME. Present a single decision with options, wait for the answer, then use that answer to shape the next question.
 
-- **Scope boundaries** — What's in and what's explicitly out?
-- **Approach options** — Are there fundamentally different ways to solve this?
-- **Compatibility constraints** — What existing behavior must be preserved?
-- **Performance implications** — Does this need to handle scale?
-- **Data considerations** — Migration needed? Backwards compatibility?
-- **Dependency decisions** — Build vs. buy? New library vs. existing?
-- **Testing strategy** — What level of confidence is needed?
-
-### Step 3: Present as Options, Not Opinions
-
-Structure your output as decisions to be made, each with clear options:
+For each decision:
 
 ```
-## Task: [Restated goal in your own words]
+**Q[N]: [Decision Name]**
 
-### Decision 1: [Decision Name]
-**Context:** [Why this decision matters]
-**Options:**
+[1-2 sentences on why this matters]
+
   A. [Option] — [tradeoff]
   B. [Option] — [tradeoff]
   C. [Option] — [tradeoff]
-**My lean:** [If you have enough context to suggest one, briefly say why]
-
-### Decision 2: [Decision Name]
-...
-
-### Constraints Identified
-- [Hard constraint from requirements]
-- [Soft constraint from context]
-
-### Assumptions to Validate During Research
-- [Assumption that needs code verification]
-- [Assumption about existing behavior]
-
-### Suggested Research Focus
-Based on these decisions, research should focus on:
-1. [Specific area to investigate]
-2. [Specific area to investigate]
 ```
 
-### Step 4: Get Alignment
+Then STOP and WAIT for the user's answer.
 
-Wait for the user to make decisions on each point before proceeding. Document their choices.
+After they answer, acknowledge their choice briefly and move to the next decision. Each subsequent question should be informed by prior answers — skip questions that are no longer relevant, surface new ones that emerge.
+
+Decision areas to probe (select only the relevant ones, in order of importance):
+
+- **Scope boundaries** — What's in and what's explicitly out?
+- **Approach options** — Fundamentally different ways to solve this?
+- **Compatibility** — What existing behavior must be preserved?
+- **Data considerations** — Migration? Backwards compatibility?
+- **Dependencies** — Build vs. buy? New library vs. existing?
+- **Testing strategy** — What level of confidence is needed?
+- **Performance** — Does this need to handle scale?
+
+Typically 3-5 decisions. If you need more than 7, the task should be split.
+
+### Step 3: Generate Decision Document
+
+After ALL decisions are resolved through the back-and-forth, compile the final document:
+
+```markdown
+# Decisions: [Task Name]
+
+**Date**: [Current date]
+**Goal**: [Restated goal in your own words]
+
+## Decisions Made
+
+### D1: [Decision Name]
+**Choice**: [What was decided]
+**Rationale**: [Why, from the conversation]
+**Tradeoff accepted**: [What we're giving up]
+
+### D2: [Decision Name]
+**Choice**: [What was decided]
+**Rationale**: [Why]
+**Tradeoff accepted**: [What we're giving up]
+
+...
+
+## Scope
+
+**In scope:**
+- [Item]
+- [Item]
+
+**Explicitly out of scope:**
+- [Item]
+- [Item]
+
+## Constraints
+- [Hard constraint]
+- [Soft constraint]
+
+## Assumptions to Validate During Research
+- [Assumption that needs code verification]
+
+## Research Focus
+Based on these decisions, research should focus on:
+1. [Specific area]
+2. [Specific area]
+```
+
+Present this document to the user for confirmation. This becomes the input for `/research`.
 
 ## Important Guidelines
 
-- **Don't research code yet.** This step is about thinking, not exploring.
+- **ONE question at a time.** Never batch decisions. The whole point is iterative dialogue.
+- **Each answer shapes the next question.** Don't use a pre-baked list — adapt.
+- **Don't research code yet.** This is about thinking, not exploring.
 - **Don't propose solutions.** Surface the decision space.
-- **Don't skip this for "obvious" tasks.** The obvious ones are where implicit assumptions bite hardest.
-- **Keep it concise.** 3-7 decisions max. If there are more, the task should be split.
-- **Make the "do nothing" option explicit** when relevant — sometimes the best decision is to not do the thing.
-
-## Output
-
-The output of this phase feeds directly into `/research`. Decisions made here constrain what research needs to explore and what it can skip.
+- **Make "do nothing" explicit** when relevant.
+- **The document is only created at the end**, from the actual conversation — not templated upfront.
