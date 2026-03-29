@@ -26,12 +26,14 @@ Then wait for the user's input.
 ### Step 1: Read and Understand
 
 - Read the plan completely
-- Check for any existing checkmarks (completed work)
-- Read ALL files mentioned in the plan
-- Read files FULLY — never partially
+- Check for any existing checkmarks `- [x]` (completed work)
+- Read ALL files mentioned in the plan — read them FULLY, never use limit/offset
 - Create a mental model of how the pieces fit together
 
-If resuming, trust that completed phases are done. Pick up from the first unchecked item.
+If resuming from a partially completed plan:
+- Trust that checked-off phases are done
+- Pick up from the first unchecked item
+- Only verify previous work if something seems off
 
 ### Step 2: Implement Phase by Phase
 
@@ -41,7 +43,7 @@ For each phase:
 2. **Follow the plan's intent** while adapting to what you actually find in the code
 3. **Run automated success criteria** after completing the phase
 4. **Fix any issues** before proceeding
-5. **Check off completed items** in the plan file using Edit
+5. **Update the plan file** — check off completed items using Edit so progress is tracked
 
 ### Step 3: Pause for Human Verification
 
@@ -51,9 +53,9 @@ After completing all automated verification for a phase:
 Phase [N] Complete — Ready for Manual Verification
 
 Automated verification passed:
-- [x] Tests pass: `npm test` ✓
-- [x] Lint clean: `npm run lint` ✓
-- [x] Build succeeds: `npm run build` ✓
+- [x] Tests pass: `[command]` ✓
+- [x] Lint clean: `[command]` ✓
+- [x] Build succeeds: `[command]` ✓
 
 Please perform the manual verification steps from the plan:
 - [ ] [Manual check 1]
@@ -62,11 +64,24 @@ Please perform the manual verification steps from the plan:
 Let me know when manual testing is complete so I can proceed to Phase [N+1].
 ```
 
-Do NOT check off manual verification items until confirmed by the user.
+**Do NOT check off manual verification items until confirmed by the user.** Only the human can verify manual items.
 
 If instructed to execute multiple phases consecutively, skip the pause until the last phase.
 
-### Step 4: Handle Mismatches
+### Step 4: After-Action Report
+
+After completing each phase (before starting the next), briefly document:
+
+```
+### Phase [N] After-Action
+- **What worked:** [What went as planned]
+- **What didn't:** [Deviations, surprises, issues encountered]
+- **Lesson for next phase:** [Anything the next phase should know]
+```
+
+This carries lessons forward and prevents repeating mistakes across phases.
+
+### Step 5: Handle Mismatches
 
 When the code doesn't match the plan:
 
@@ -97,27 +112,23 @@ STOP and communicate clearly. Don't silently deviate from the plan.
 ## Context Management
 
 Implementation should have a SMALL context window:
-- Research summary: ~200-500 tokens (compressed from prior phases)
 - Plan: ~500-1000 tokens
 - Active code: whatever the current phase needs
 
 This leaves most of the context window in the "smart zone" for actual coding.
 
 If context grows large during implementation:
-1. Summarize progress into markdown
-2. Note what's done and what's next
-3. Start fresh with just the summary and remaining plan
-
-## Sub-Agent Usage
-
-Use sub-agents sparingly during implementation — mainly for:
-- Targeted debugging when something isn't working
-- Exploring unfamiliar code not covered by research
-- Running verification across multiple files
+1. Summarize progress into markdown (what's done, what's next, any issues)
+2. Start fresh with just the summary and remaining plan
+3. This is intentional compaction — same principle as between phases
 
 ## Important Notes
 
-- **Don't skip verification.** Run the checks even if you're confident.
-- **Don't expand scope.** If you notice something that should change but isn't in the plan, flag it — don't fix it.
-- **Don't rush phases.** Each phase should be solid before moving on.
-- **Maintain forward momentum.** You're implementing a solution, not just checking boxes.
+- **Read files FULLY** — never use limit/offset parameters
+- **Update the plan file as you go** — check off items so progress is resumable
+- **Don't check off manual items** — only the human can verify those
+- **Don't skip verification** — run checks even if you're confident
+- **Don't expand scope** — if you notice something outside the plan, flag it, don't fix it
+- **Don't rush phases** — each phase should be solid before moving on
+- **Write after-action reports** — lessons carry forward to the next phase
+- **Don't silently deviate** — if reality doesn't match the plan, stop and communicate

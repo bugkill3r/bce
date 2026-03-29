@@ -8,12 +8,12 @@ You are tasked with creating a detailed implementation plan that is explicit eno
 
 ## When This Command Is Invoked
 
-If a structure document, research document, or ticket is provided, read them fully and begin immediately.
+If a structure document, design document, research document, or ticket is provided, read them fully and begin immediately.
 
 Otherwise respond with:
 ```
 I'll help create a detailed implementation plan. Please provide:
-1. The structure document from /structure (or research from /research)
+1. The structure outline from /structure (or design from /design, or research from /research)
 2. Any design decisions or constraints
 3. Links to related tickets or documents
 
@@ -26,30 +26,39 @@ Then wait for the user's input.
 
 ### Step 1: Context Gathering
 
-1. **Read ALL referenced files completely** — no partial reads
-2. **Spawn research sub-agents** if you need to understand code not covered by prior research:
-   - Use **codebase-locator** to find relevant files
+1. **Read ALL referenced files completely** — never use limit/offset, always read the full file
+2. **Read files yourself in main context BEFORE spawning sub-agents** — you need this context to write good sub-agent prompts
+3. **Spawn research sub-agents** if you need to understand code not covered by prior research:
+   - Use **codebase-locator** to find relevant files — be specific about directories
    - Use **codebase-analyzer** to understand implementation details
    - Use **pattern-finder** to find conventions to follow
-3. **Read files identified by sub-agents** into your main context
-4. **Cross-reference** requirements against actual code
+4. **Read files identified by sub-agents** into your main context
+5. **Cross-reference** requirements against actual code
 
 Present your understanding with file:line references. Only ask questions you cannot answer through code investigation.
 
-### Step 2: Research & Discovery
+### Step 2: Verify and Discover
 
 If the user corrects any misunderstanding:
-- DO NOT just accept the correction — spawn new sub-agents to verify
+- **DO NOT just accept the correction** — spawn new sub-agents to verify against actual code
 - Read the specific files/directories they mention
 - Only proceed once you've verified the facts yourself
 
-Spawn parallel sub-agents for concurrent investigation. Wait for ALL to complete before proceeding.
+If sub-agent results seem incomplete or wrong:
+- Spawn follow-up sub-agents to investigate
+- Cross-check findings — don't trust blindly
+- Be EXTREMELY specific about directories in follow-up prompts
 
-Present findings with design options if applicable.
+Wait for ALL sub-agents to complete before proceeding.
 
 ### Step 3: Plan Structure
 
 If no structure document exists, create an outline proposing phases. Get user feedback before writing details.
+
+Reference common implementation patterns:
+- **Database changes:** Schema/migration → Store methods → Business logic → API → Client
+- **New features:** Data model → Backend logic → API endpoints → UI
+- **Refactoring:** Document current behavior → Incremental changes → Migration → Cleanup
 
 ### Step 4: Write the Plan
 
@@ -57,6 +66,10 @@ Write the plan with this structure:
 
 ```markdown
 # [Feature/Task Name] — Implementation Plan
+
+**Date**: [Current date]
+**Branch**: [Current git branch]
+**Based on**: [Research/design/structure doc references]
 
 ## Overview
 [1-2 sentences: what we're implementing and why]
@@ -113,7 +126,7 @@ Write the plan with this structure:
 - [ ] [Edge case to test]
 - [ ] [UX check if applicable]
 
-**Pause here for manual verification before proceeding to Phase 2.**
+**After automated verification passes, pause for human manual verification before proceeding to Phase 2.**
 
 ---
 
@@ -140,6 +153,7 @@ Write the plan with this structure:
 
 ## References
 - Research: [link or path to research document]
+- Design: [link or path to design document]
 - Related: [file:line references]
 ```
 
@@ -155,53 +169,17 @@ Iterate until the user is satisfied.
 
 ## Important Guidelines
 
-### Be Skeptical
-- Question vague requirements
-- Identify potential issues early
-- Don't assume — verify with code
-
-### Be Interactive
-- Don't write the full plan in one shot
-- Get buy-in at each major step
-- Allow course corrections
-
-### Be Thorough
-- Read all context files COMPLETELY
-- Research actual code patterns via parallel sub-agents
-- Include specific file paths and line numbers
-- Write measurable success criteria
-
-### Be Practical
-- Focus on incremental, testable changes
-- Consider migration and rollback
-- Think about edge cases
-- Include "what we're NOT doing"
-
-### No Open Questions
-- If you encounter open questions, STOP
-- Research or ask for clarification immediately
-- DO NOT write the plan with unresolved questions
-- Every decision must be made before finalizing
-
-## Success Criteria Format
-
-Always separate into two categories:
-
-**Automated Verification** — commands that can be run:
-```
-- [ ] Tests pass: `npm test`
-- [ ] Lint clean: `npm run lint`
-- [ ] Type check: `npm run typecheck`
-- [ ] Build: `npm run build`
-```
-
-**Manual Verification** — requires human testing:
-```
-- [ ] Feature works correctly in UI
-- [ ] Performance acceptable under load
-- [ ] Error messages are user-friendly
-- [ ] No regressions in related features
-```
+- **Read files FULLY** — never use limit/offset parameters
+- **Read referenced files yourself BEFORE spawning sub-agents**
+- **Don't accept corrections blindly** — verify against code
+- **Verify sub-agent results** — spawn follow-ups if something seems off
+- **Be specific about directories** in sub-agent prompts
+- **Question vague requirements** — identify issues early
+- **Don't write the full plan in one shot** — get buy-in at each major step
+- **Include specific file paths and line numbers** for all claims
+- **No open questions** — if questions arise, STOP and resolve before continuing
+- **Always separate automated vs manual success criteria**
+- **Manual verification items are NOT checked off until the human confirms**
 
 ## Output
 

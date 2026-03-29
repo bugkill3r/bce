@@ -25,7 +25,8 @@ Then wait for the user's input.
 
 ### Step 1: Absorb Context
 
-- Read research and decision documents fully
+- Read research and decision documents FULLY — never use limit/offset
+- Read any files referenced in the research doc that you need to verify
 - Understand what exists today
 - Understand what needs to change and why
 
@@ -37,9 +38,12 @@ Produce a document (~200 lines) covering:
 # Design: [Feature/Task Name]
 
 **Date**: [Current date]
+**Branch**: [Current git branch]
+**Based on**: [Research doc reference]
 
 ## Current State
 [What exists today — summarize from research. Include key file:line references.]
+[Every claim about current state must reference actual code from research.]
 
 ## Desired End State
 [What should exist after this work is complete. Be specific and concrete.]
@@ -56,6 +60,7 @@ Produce a document (~200 lines) covering:
 ### D1: [Decision]
 **Choice**: [What]
 **Why**: [Rationale]
+**Tradeoff accepted**: [What we're giving up]
 
 ### D2: [Decision]
 ...
@@ -79,7 +84,7 @@ Present the design and ask:
 - Are the resolved decisions captured correctly?
 - Any open questions we need to resolve now?
 
-Do NOT proceed until open questions are resolved. Research further or ask the user.
+Do NOT proceed until open questions are resolved. If an open question requires code investigation, spawn sub-agents to research it. If it requires human judgment, ask.
 
 ### Step 4: Finalize
 
@@ -91,3 +96,4 @@ Once approved, the design document feeds into `/structure` which will define the
 - **Ground everything in research.** Every claim about current state should reference actual code.
 - **Resolve open questions here.** Don't carry them into structure or planning.
 - **~200 lines max.** This is a discussion document, not a specification.
+- **Include metadata** (date, branch, research ref) so the design is traceable.
